@@ -3,10 +3,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 const app = express();
 
 // Set methodOverride
 app.use(methodOverride('_method'));
+
+// Set fileUpload
+app.use(fileUpload());
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

@@ -1,5 +1,9 @@
 const Category = require('../models/category');
 
+var mkdirp = require('mkdirp');
+var fs = require('fs-extra');
+var resizeImg = require('resize-img');
+
 exports.GetCategory = async (req, res) => {
     try {
         const caterorys = await Category.find();
@@ -34,8 +38,52 @@ exports.GetCategoryEdit = async (req, res) => {
 };
 exports.PostCategoryAdd = async (req, res) => {
     try {
-        const newCategory = await Category.create(req.body);
-        res.status(200).redirect('/api/categorys');
+        // const newCategory = await Category.create(req.body);
+        // res.status(200).redirect('/api/categorys');
+
+        let imageFile = "";
+        let name = req.body.name;
+        if (req.files && typeof req.files.image !== "undefined"){
+            imageFile = req.files.image.name;
+            // imageFile = req.body.image;
+        };
+        // console.log(imageFile)
+        // console.log(req.body.image)
+        // console.log(req.files)
+        
+        var category = new Category({
+            name: name,
+            image: imageFile,
+        });
+
+        category.save(function (err) {
+            if (err){
+                return console.log(err);
+            }
+                
+            mkdirp('public/category/' + category.name, function (err) {
+                return console.log(err);
+            });
+
+            // mkdirp('public/category/' + category.name + '/gallery', function (err) {
+            //     return console.log(err);
+            // });
+
+            // mkdirp('public/category/' + category.name + '/gallery/thumbs', function (err) {
+            //     return console.log(err);
+            // });
+
+            if (imageFile != "") {
+                var categoryImage = req.files.image;
+                var path = 'public/category/' + category.name + '/' + imageFile;
+
+                categoryImage.mv(path, function (err) {
+                    return console.log(err);
+                });
+            }
+
+            res.redirect('/api/categorys');
+        });
 
     } catch (error) {
         res.status(400).json(error);
