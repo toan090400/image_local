@@ -1,0 +1,34 @@
+<%- include ('../layout/header.ejs'); -%>
+
+    <div class="container">
+        <h2>products</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    products.forEach( (item) =>{%>
+                        <tr>
+                            <td><%= item.name %></td>
+                            <td>
+                                <a class="btn btn-info" href="/api/products/edit/<%= item._id %>">Cập nhật</a>
+                            </td>
+                            <td>
+                                <form action="/api/products/delete/<%= item._id %>?_method=DELETE" method="POST">
+                                    <button type="submit" class="btn btn-warning">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>    
+                    <%});
+                %>
+            </tbody>
+        </table>
+    </div>
+
+<%- include ('../layout/footer.ejs'); -%>
+    
