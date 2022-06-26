@@ -142,8 +142,12 @@ exports.PutCategoryEdit = async (req, res) => {
 };
 exports.DeleteCategoryDelete = async (req, res) => {
     try {
-        const product = await Category.findByIdAndDelete(req.params.id);
-
+        const category = await Category.findByIdAndDelete(req.params.id);
+        fs.remove('public/category/' + category.name , function (err) {
+            if (err){
+                console.log(err);
+            }
+        });
         res.status(200).redirect('/api/categorys');
 
     } catch (error) {
