@@ -2,7 +2,7 @@ const Category = require('../models/category');
 
 var mkdirp = require('mkdirp');
 var fs = require('fs-extra');
-var resizeImg = require('resize-img');
+// var resizeImg = require('resize-img');
 
 exports.GetCategory = async (req, res) => {
     try {
@@ -45,12 +45,7 @@ exports.PostCategoryAdd = async (req, res) => {
         let name = req.body.name;
         if (req.files && typeof req.files.image !== "undefined"){
             imageFile = req.files.image.name;
-            // imageFile = req.body.image;
         };
-        // console.log(imageFile)
-        // console.log(req.body.image)
-        // console.log(req.files)
-        
         var category = new Category({
             name: name,
             image: imageFile,
@@ -91,11 +86,54 @@ exports.PostCategoryAdd = async (req, res) => {
 };
 exports.PutCategoryEdit = async (req, res) => {
     try {
-        const newCategory = await Category.findByIdAndUpdate(req.params.id,req.body,{
-            new: true,
-            runValidators: true,
+        // const newCategory = await Category.findByIdAndUpdate(req.params.id,req.body,{
+        //     new: true,
+        //     runValidators: true,
+        // });
+        // res.status(200).redirect('/api/categorys');
+        let name = req.body.name;
+        let imageOld = req.body.imageOld;
+        let imageFile;
+        if (req.files && typeof req.files.image !== "undefined"){
+            imageFile = req.files.image.name;    
+        };
+        Category.findById({_id:req.params.id}, function (err, category) {
+            if (err){
+                console.log(err);
+            }
+            
+            category.name = name;
+
+            if (imageFile) {
+                category.image = imageFile;
+            }
+            category.save(function (err) {
+                if (err)
+                    console.log(err);
+
+
+                if (imageFile) {
+                    if (imageOld) {
+                        fs.remove('public/category/' + name + '/' + imageOld, function (err) {
+                            if (err){
+                                console.log(err);
+                            }
+                        });
+                    }
+
+                    var categoryImage = req.files.image;
+                    var path = 'public/category/' + name + '/' + imageFile;
+
+                    categoryImage.mv(path, function (err) {
+                        return console.log(err);
+                    });
+
+                }
+
+                res.redirect('/api/categorys');
+            });
+
         });
-        res.status(200).redirect('/api/categorys');
 
     } catch (error) {
         console.log(error);
