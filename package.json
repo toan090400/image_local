@@ -16,8 +16,7 @@
     "fs-extra": "^10.0.0",
     "method-override": "^3.0.0",
     "mkdirp": "^0.5.1",
-    "mongoose": "^6.4.0",
-    "resize-img": "^2.0.0"
+    "mongoose": "^6.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"
